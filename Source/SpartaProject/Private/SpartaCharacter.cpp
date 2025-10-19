@@ -206,8 +206,55 @@ float ASpartaCharacter::GetHealthPercent() const
 
 void ASpartaCharacter::OnDeath()
 {
-    UE_LOG(LogTemp, Error, TEXT("Character is Dead!"));
+    if (bIsDead)
+    {
+        return; 
+    }
+    bIsDead = true;
 
+    UE_LOG(LogTemp, Warning, TEXT("Character is Dead"));
+
+    
+    if (AController* C = GetController())
+    {
+        if (APlayerController* PC = Cast<APlayerController>(C))
+        {
+            DisableInput(PC);
+        }
+    }
+
+    
+    if (UCharacterMovementComponent* Move = GetCharacterMovement())
+    {
+        Move->StopMovementImmediately();
+        Move->DisableMovement();
+    }
+
+   
+    
+
+    
+    if (USkeletalMeshComponent* MeshComp = GetMesh())
+    {
+        MeshComp->SetHiddenInGame(true);
+        MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
+    SetActorHiddenInGame(true);
+
+    DetachFromControllerPendingDestroy();
+
+    
+    if (ASpartaPlayerController* PC = Cast<ASpartaPlayerController>(GetController()))
+    {
+       
+        PC->ShowMainMenu(true);
+    }
+    else
+    {
+       
+        UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("MenuLevel")));
+    }
+
+   
+    SetLifeSpan(0.1f);
 }
-
-

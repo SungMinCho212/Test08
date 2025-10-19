@@ -30,7 +30,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void AddHealth(float Amount);
-
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	virtual void OnDeath();
 	
 
 protected:
@@ -67,10 +68,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
 	float Health;
 	
-	UFUNCTION(BlueprintCallable, Category = "Health")
-	virtual void OnDeath();
+	
 
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = "true"))
+	bool bIsDead = false;
 };
